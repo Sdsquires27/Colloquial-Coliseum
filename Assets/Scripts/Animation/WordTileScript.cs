@@ -12,6 +12,7 @@ public class WordTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnter
     [SerializeField] private TextMeshProUGUI worthText;
     public Letter letter;
     private LetterScript letterScript;
+    private GameManager gameManager;
 
     public void OnPointerClick(PointerEventData pointerEventData)
     {
@@ -73,6 +74,7 @@ public class WordTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         // get the current animation
         anim = GetComponent<Animator>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void initialize(Letter newLetter)

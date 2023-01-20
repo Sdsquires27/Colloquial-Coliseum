@@ -34,9 +34,15 @@ public class GameManager : MonoBehaviour
     private int numPlayers; // number of players
     private int playerNum = 0; // current player ID
     private int score;
+    private int numRounds;
+    private int bonusPerRound;
+    private bool draftingOn;
+    private bool buyingScore;
+    private bool handicapOn;
 
     // MODE SELECT VARS
-    private Slider slider; // slider used to find numPlayers
+    private UIWorldTileScript[] wordTileScripts; // settings set by word tile scripts (drafting type, buying type, handicap on)
+    private SlideSettingManager[] slideSettingManagers; // settings set by slide setting managers (num players, num rounds, bonus per round)
 
     // PHASE ONE VARIABLES
     private bool nextScene = false;
@@ -47,12 +53,13 @@ public class GameManager : MonoBehaviour
     int numPicks = 0; // number of picks that have been grabbed this reveal, phase one
 
     //PHASE TWO VARIABLES
-    private LetterHolder letterHolder; // phase two holder
-    private LetterHolder spellHolder;
+    private LetterHolder letterHolder; // phase two holder of letters not used
+    private LetterHolder spellHolder; // phase two spell holder of spells not used
     private WordMaker wordMaker; // holds the words that are created
     private Transform horizontalLayout; // the horizontal layout used in phase two (split automatically by letter holder)
     private Transform spellHorizontalLayout; // the horizontal layout used in phase two (split automatically by letter holder)
-    private UnitCreator curCreator;
+    private UnitCreator curCreator; // the current unit creator being used
+    // text for the unit stats:
     private TextMeshProUGUI hpText;
     private TextMeshProUGUI pierceText;
     private TextMeshProUGUI armorText;
@@ -60,8 +67,8 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI spdText;
 
     // PHASE THREE VARIABLES
-    private LevelScript levelScript;
-    private GameObject panel;
+    private LevelScript levelScript; // access to the script that controls everything in phase 3
+    private GameObject panel; // end of game panel
 
     #endregion
 
@@ -75,8 +82,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // TODO: switch from slider to button (looks better)
-        slider = FindObjectOfType<Slider>();
+        wordTileScripts = new UIWorldTileScript[] {GameObject.FindGameObjectWithTag("DraftingType").GetComponent<UIWorldTileScript>(), GameObject.FindGameObjectWithTag("BuyingType").GetComponent<UIWorldTileScript>(), GameObject.FindGameObjectWithTag("HandicapOn").GetComponent<UIWorldTileScript>() };
+        slideSettingManagers = new SlideSettingManager[] { GameObject.FindGameObjectWithTag("NumPlayers").GetComponent<SlideSettingManager>(), GameObject.FindGameObjectWithTag("NumRounds").GetComponent<SlideSettingManager>(), GameObject.FindGameObjectWithTag("NumBonus").GetComponent<SlideSettingManager>() };
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -85,8 +93,35 @@ public class GameManager : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name == "ModeSelect")
         {
-            // number of players = the value listed on the slider
-            numPlayers = (int)slider.value;
+            if (wordTileScripts[0].activated)
+            {
+                for(int i = 1; i < wordTileScripts.Length; i++)
+                {
+                    wordTileScripts[i].enabled = false;
+                    wordTileScripts[i].GetComponent<Image>().color = Color.gray;
+                }
+                slideSettingManagers[2].enabled = false;
+                foreach(Image image in slideSettingManagers[2].transform.GetComponentsInChildren<Image>())
+                {
+                    image.color = Color.gray;
+                }
+            }
+            else
+            {
+                for (int i = 1; i < wordTileScripts.Length; i++)
+                {
+                    wordTileScripts[i].enabled = true;
+                    wordTileScripts[i].GetComponent<Image>().color = Color.white;
+                }
+                slideSettingManagers[2].enabled = true;
+                foreach (Image image in slideSettingManagers[2].transform.GetComponentsInChildren<Image>())
+                {
+                    image.color = Color.white;
+                }
+            }
+            numPlayers = slideSettingManagers[0].curNum;
+
+
         }
         else if (SceneManager.GetActiveScene().name == "Phase Two")
         {

@@ -25,6 +25,13 @@ TagManager:
   - Mat2
   - Mat3
   - Mat4
+  - DraftingType
+  - BuyingType
+  - HandicapOn
+  - NumPlayers
+  - NumRounds
+  - NumBonus
+  - FadeImage
   layers:
   - Default
   - TransparentFX

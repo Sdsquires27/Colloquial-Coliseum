@@ -3589,6 +3589,7 @@ MonoBehaviour:
     moveSpeedMin: 0
     dmgMin: 0
     spellSlots: 0
+    spellTiles: []
     spells: []
   text: {fileID: 1270740020}
 --- !u!114 &1311241743

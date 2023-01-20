@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class LetterScript : MonoBehaviour, IPointerClickHandler
+public class LetterScript : MonoBehaviour
 {
     [System.NonSerialized] public Letter letter;
     private WordTileScript wordTile;
@@ -13,17 +13,6 @@ public class LetterScript : MonoBehaviour, IPointerClickHandler
     [System.NonSerialized] public TileHolder tileHolder;
     [SerializeField] private LetterFollow letterFollowPrefab;
     private LetterFollow letterFollow;
-
-    public void OnPointerClick(PointerEventData pointerEventData)
-    {
-        // handle in the game manager to allow for different results in different scenes
-/*        gameManager.curPlayer.addTile(this);
-        tileHolder.removeTile(this);
-        gameManager.switchTurns();*/
-
-        // if revealed, let the game manager determine what the result of the click will be
-        // if (revealed) gameManager.handleTileClick(this);
-    }
 
     public void handleTileClick()
     {
