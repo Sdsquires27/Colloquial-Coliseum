@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -86,6 +87,46 @@ public class GameManager : MonoBehaviour
         slideSettingManagers = new SlideSettingManager[] { GameObject.FindGameObjectWithTag("NumPlayers").GetComponent<SlideSettingManager>(), GameObject.FindGameObjectWithTag("NumRounds").GetComponent<SlideSettingManager>(), GameObject.FindGameObjectWithTag("NumBonus").GetComponent<SlideSettingManager>() };
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    public static List<string> readTextFile(string file_path, string linebreak)
+    {
+        List<string> ret = new List<string>();
+        StreamReader inp_stm = new StreamReader(file_path);
+
+        while (!inp_stm.EndOfStream)
+        {
+            string toAdd = "";
+            string inp_ln = inp_stm.ReadLine();
+            if(inp_ln != linebreak)
+            {
+                toAdd += inp_ln;
+            }
+            else
+            {
+                ret.Add(toAdd);
+                toAdd = "";
+            }
+
+        }
+
+        inp_stm.Close();
+        return ret;
+    }
+    public static List<string> readTextFile(string file_path)
+    {
+        List<string> ret = new List<string>();
+        StreamReader inp_stm = new StreamReader(file_path);
+
+        while (!inp_stm.EndOfStream)
+        {
+            string inp_ln = inp_stm.ReadLine();
+            ret.Add(inp_ln);
+
+        }
+
+        inp_stm.Close();
+        return ret;
     }
 
     // Update is called once per frame
