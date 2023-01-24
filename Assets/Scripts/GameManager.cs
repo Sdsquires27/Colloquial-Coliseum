@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     // private variables
 
     // ALL PHASE VARIABLES
+    public static GameManager instance { get { return FindObjectOfType<GameManager>(); } }
     private int numPlayers; // number of players
     private int playerNum = 0; // current player ID
     private int score;
@@ -42,8 +43,8 @@ public class GameManager : MonoBehaviour
     private bool handicapOn;
 
     // MODE SELECT VARS
-    private UIWorldTileScript[] wordTileScripts; // settings set by word tile scripts (drafting type, buying type, handicap on)
-    private SlideSettingManager[] slideSettingManagers; // settings set by slide setting managers (num players, num rounds, bonus per round)
+    [SerializeField] private UIWorldTileScript[] wordTileScripts; // settings set by word tile scripts (drafting type, buying type, handicap on)
+    [SerializeField] private SlideSettingManager[] slideSettingManagers; // settings set by slide setting managers (num players, num rounds, bonus per round)
 
     // PHASE ONE VARIABLES
     private bool nextScene = false;
@@ -83,50 +84,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        wordTileScripts = new UIWorldTileScript[] {GameObject.FindGameObjectWithTag("DraftingType").GetComponent<UIWorldTileScript>(), GameObject.FindGameObjectWithTag("BuyingType").GetComponent<UIWorldTileScript>(), GameObject.FindGameObjectWithTag("HandicapOn").GetComponent<UIWorldTileScript>() };
-        slideSettingManagers = new SlideSettingManager[] { GameObject.FindGameObjectWithTag("NumPlayers").GetComponent<SlideSettingManager>(), GameObject.FindGameObjectWithTag("NumRounds").GetComponent<SlideSettingManager>(), GameObject.FindGameObjectWithTag("NumBonus").GetComponent<SlideSettingManager>() };
+        foreach(UIWorldTileScript x in wordTileScripts)
+        {
+            Debug.Log(x.name);
+        }
 
         DontDestroyOnLoad(gameObject);
-    }
-
-    public static List<string> readTextFile(string file_path, string linebreak)
-    {
-        List<string> ret = new List<string>();
-        StreamReader inp_stm = new StreamReader(file_path);
-
-        while (!inp_stm.EndOfStream)
-        {
-            string toAdd = "";
-            string inp_ln = inp_stm.ReadLine();
-            if(inp_ln != linebreak)
-            {
-                toAdd += inp_ln;
-            }
-            else
-            {
-                ret.Add(toAdd);
-                toAdd = "";
-            }
-
-        }
-
-        inp_stm.Close();
-        return ret;
-    }
-    public static List<string> readTextFile(string file_path)
-    {
-        List<string> ret = new List<string>();
-        StreamReader inp_stm = new StreamReader(file_path);
-
-        while (!inp_stm.EndOfStream)
-        {
-            string inp_ln = inp_stm.ReadLine();
-            ret.Add(inp_ln);
-
-        }
-
-        inp_stm.Close();
-        return ret;
     }
 
     // Update is called once per frame
@@ -161,6 +124,12 @@ public class GameManager : MonoBehaviour
                 }
             }
             numPlayers = slideSettingManagers[0].curNum;
+            numRounds = slideSettingManagers[1].curNum;
+            bonusPerRound = slideSettingManagers[2].curNum;
+            draftingOn = wordTileScripts[0].activated;
+            buyingScore = wordTileScripts[1].activated;
+            handicapOn = wordTileScripts[2].activated;
+
 
 
         }
@@ -669,6 +638,61 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    public static List<string> readTextFile(string file_path, string linebreak)
+    {
+        List<string> ret = new List<string>();
+        StreamReader inp_stm = new StreamReader(file_path);
+
+        while (!inp_stm.EndOfStream)
+        {
+            string toAdd = "";
+            string inp_ln = inp_stm.ReadLine();
+            if (inp_ln != linebreak)
+            {
+                toAdd += inp_ln;
+            }
+            else
+            {
+                ret.Add(toAdd);
+                toAdd = "";
+            }
+
+        }
+
+        inp_stm.Close();
+        return ret;
+    }
+    public static List<string> readTextFile(string file_path)
+    {
+        List<string> ret = new List<string>();
+        StreamReader inp_stm = new StreamReader(file_path);
+
+        while (!inp_stm.EndOfStream)
+        {
+            string inp_ln = inp_stm.ReadLine();
+            ret.Add(inp_ln);
+
+        }
+
+        inp_stm.Close();
+        return ret;
+    }
+
+    public List<string> curSettings()
+    {
+        List<string> settings = new List<string>();
+        settings.Add(draftingOn.ToString());
+        settings.Add(numRounds.ToString());
+        settings.Add(buyingScore.ToString());
+        settings.Add(bonusPerRound.ToString());
+        settings.Add(handicapOn.ToString());
+        return settings;
+    }
+    
+    public void newSettings(string[] settings)
+    {
+
+    }
     private void activatePlayerMat()
     {
         for(int i = 0; i < 4; i++)
