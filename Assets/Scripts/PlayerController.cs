@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private int maxLetters;
+    [SerializeField] public Color color;
 
 
     private List<LetterScript> heldTiles = new List<LetterScript>();

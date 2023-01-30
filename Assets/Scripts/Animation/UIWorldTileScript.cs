@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    
+
     private Animator anim;
     [SerializeField] private TextMeshProUGUI letterText;
     [SerializeField] private Animator letterAnim;
@@ -88,5 +90,16 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
         // get the current animation
         anim = GetComponent<Animator>();
         letterText.text = states[0];
+    }
+
+    public void setValue(bool newValue)
+    {
+        if (activated != newValue)
+        {
+
+            anim.SetBool("TileFlipped", newValue);
+            letterAnim.SetBool("TileFlipped", newValue);
+            StartCoroutine(changeText(states[anim.GetBool("TileFlipped") ? 0 : 1], .2f));
+        }
     }
 }

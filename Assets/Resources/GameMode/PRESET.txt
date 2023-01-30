@@ -1,7 +1,12 @@
 CLASSIC
-2
-TRUE
+true
 1
-TRUE
-1000
-FALSE
+null
+null
+null
+BUY
+false
+3
+true
+2000
+true

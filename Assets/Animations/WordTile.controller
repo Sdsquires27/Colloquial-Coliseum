@@ -234,7 +234,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -6067527203021861294}
-    m_Position: {x: 190, y: -140, z: 0}
+    m_Position: {x: 220, y: -140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6970250133038031746}
     m_Position: {x: 620, y: 270, z: 0}
@@ -243,16 +243,16 @@ AnimatorStateMachine:
     m_Position: {x: 600, y: -340, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -433743014068421971}
-    m_Position: {x: 840, y: 30, z: 0}
+    m_Position: {x: 860, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8680765836267449825}
-    m_Position: {x: 500, y: 40, z: 0}
+    m_Position: {x: 570, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 370934554081234796}
     m_Position: {x: 680, y: -40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 9065239217043018883}
-    m_Position: {x: 490, y: -90, z: 0}
+    m_Position: {x: 540, y: -70, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -329,19 +329,19 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: TileFlipped
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: TileTouched
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer

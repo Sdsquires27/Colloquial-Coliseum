@@ -22,11 +22,8 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
         if (!anim.GetBool("TileFlipped"))
         {
-            // change the value of tile flipped
-            anim.SetBool("TileFlipped", true);
-            StartCoroutine(changeText("", .2f));
+
             GameManager.instance.newSettings(settings);
-            letterAnim.SetBool("TileFlipped", true);
         }
 
     }
@@ -57,6 +54,10 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         {
             if (!anim.GetBool("TileFlipped"))
             {
+                if (anim.GetBool("TileTouched"))
+                {
+                    anim.SetTrigger("TileFlip");
+                }
                 anim.SetBool("TileFlipped", true);
                 StartCoroutine(changeText("", .2f));
                 letterAnim.SetBool("TileFlipped", true);
@@ -71,7 +72,6 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
                 letterAnim.SetBool("TileFlipped", false);
             }
         }
-        Debug.Log(checkSettings());
     }
 
     public void Start()
@@ -79,14 +79,15 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         text = letterText.text;
     }
 
-    private bool checkSettings()
+    public bool checkSettings()
     {
         bool same = true;
         for(int i = 0; i < settings.Length; i++)
         {
             string setting = settings[i];
             string gameSetting = GameManager.instance.curSettings()[i];
-            if (setting != gameSetting) same = false;
+            
+            if (setting.Trim().ToLower() != "null" && setting.Trim().ToLower() != gameSetting.ToLower()) same = false;
         }
 
         return same;

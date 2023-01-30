@@ -42,4 +42,22 @@ public class SlideSettingManager : MonoBehaviour
         }
 
     }
+
+    public void setNum(int num)
+    {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("tileSlide"))
+        {
+            if (num > curNum)
+            {
+                anim.SetTrigger("MoveRight");
+
+            }
+            else if(num < curNum)
+            {
+                anim.SetTrigger("MoveLeft");
+            }
+            curNum = num;
+
+        }
+    }
 }

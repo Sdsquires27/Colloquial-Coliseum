@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System.Text;
+
 public class GameManager : MonoBehaviour
 {
     // a class for controlling movement during and between scenes
@@ -32,7 +34,8 @@ public class GameManager : MonoBehaviour
     // private variables
 
     // ALL PHASE VARIABLES
-    public static GameManager instance { get { return FindObjectOfType<GameManager>(); } }
+    private static GameManager _instance;
+    public static GameManager instance { get { return _instance; } }
     private int numPlayers; // number of players
     private int playerNum = 0; // current player ID
     private int score;
@@ -40,7 +43,7 @@ public class GameManager : MonoBehaviour
     private int bonusPerRound;
     private bool draftingOn;
     private bool buyingScore;
-    private bool handicapOn;
+    private bool handicapOff;
 
     // MODE SELECT VARS
     [SerializeField] private UIWorldTileScript[] wordTileScripts; // settings set by word tile scripts (drafting type, buying type, handicap on)
@@ -84,12 +87,17 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        foreach(UIWorldTileScript x in wordTileScripts)
+        if(instance == null)
         {
-            Debug.Log(x.name);
+            _instance = this;
         }
-
-        DontDestroyOnLoad(gameObject);
+        else
+        {
+            
+            Debug.Log("Duplicate Game Managers");
+            Destroy(instance.gameObject);
+            _instance = this;
+        }
     }
 
     // Update is called once per frame
@@ -128,7 +136,7 @@ public class GameManager : MonoBehaviour
             bonusPerRound = slideSettingManagers[2].curNum;
             draftingOn = wordTileScripts[0].activated;
             buyingScore = wordTileScripts[1].activated;
-            handicapOn = wordTileScripts[2].activated;
+            handicapOff = wordTileScripts[2].activated;
 
 
 
@@ -206,9 +214,11 @@ public class GameManager : MonoBehaviour
         int j = 0;
         foreach (PlayerController player in playerList)
         {
+            Image tempSr = GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Image>();
+            tempSr.color = playerList[j].color;
             player.gameObject.SetActive(true);
             GameObject y = Instantiate(personalMatPrefab, GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Transform>());
-            y.GetComponent<Image>().color = GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Image>().color;
+            y.GetComponent<Image>().color = playerList[j].color;
             j++;
         }
 
@@ -395,6 +405,8 @@ public class GameManager : MonoBehaviour
     {
         // set the current player
         curPlayer = playerList[playerID];
+        letterHolder.GetComponent<Image>().color = curPlayer.color;
+        spellHolder.GetComponent<Image>().color = curPlayer.color;
 
         // grab the letters to generate
         string letters = wordList[playerID];
@@ -678,19 +690,53 @@ public class GameManager : MonoBehaviour
         return ret;
     }
 
+    public static string RemoveSpecialCharacters(string str)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (char c in str)
+        {
+            if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == ' ')
+            {
+                sb.Append(c);
+            }
+        }
+        return sb.ToString();
+    }
+
     public List<string> curSettings()
     {
         List<string> settings = new List<string>();
         settings.Add(draftingOn.ToString());
         settings.Add(numRounds.ToString());
-        settings.Add(buyingScore.ToString());
-        settings.Add(bonusPerRound.ToString());
-        settings.Add(handicapOn.ToString());
+        if (draftingOn)
+        {
+            settings.Add("null");
+            settings.Add("null");
+            settings.Add("null");
+
+        }
+        else
+        {
+            settings.Add(buyingScore.ToString());
+            settings.Add(bonusPerRound.ToString());
+            settings.Add(handicapOff.ToString());
+        }
+
         return settings;
     }
     
     public void newSettings(string[] settings)
     {
+        wordTileScripts[0].setValue(settings[0].ToLower().Trim() == "true" ? true : false);
+        slideSettingManagers[1].setNum(int.Parse(settings[1]));
+
+        if (!wordTileScripts[0].activated)
+        {
+            wordTileScripts[1].setValue(settings[2].ToLower().Trim() == "true" ? true : false);
+            slideSettingManagers[2].setNum(int.Parse(settings[3]));
+            wordTileScripts[2].setValue(settings[4].ToLower().Trim() == "true" ? true : false);
+        }
+
 
     }
     private void activatePlayerMat()
