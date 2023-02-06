@@ -20,8 +20,7 @@ public class WordMaker : MonoBehaviour
 
     public void endTurn()
     {
-        GameManager gameManager = FindObjectOfType<GameManager>();
-        gameManager.switchTurns();
+        GameManager.instance.switchTurns();
     }
 
     public void submitWord()

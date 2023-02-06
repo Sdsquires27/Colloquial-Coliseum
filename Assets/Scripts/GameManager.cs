@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     //PHASE TWO VARIABLES
     private LetterHolder letterHolder; // phase two holder of letters not used
-    private LetterHolder spellHolder; // phase two spell holder of spells not used
+    [System.NonSerialized] public LetterHolder spellHolder; // phase two spell holder of spells not used
     private WordMaker wordMaker; // holds the words that are created
     private Transform horizontalLayout; // the horizontal layout used in phase two (split automatically by letter holder)
     private Transform spellHorizontalLayout; // the horizontal layout used in phase two (split automatically by letter holder)
@@ -518,7 +518,7 @@ public class GameManager : MonoBehaviour
 
         else if (SceneManager.GetActiveScene().name == "Phase Two")
         {
-            if (FindObjectOfType<UnitCreator>().canEndTurn(spellHolder))
+            if (FindObjectOfType<UnitCreator>().canEndTurn())
             {
                 // save the units created
                 UnitCreator unitCreator = FindObjectOfType<UnitCreator>();
@@ -705,9 +705,11 @@ public class GameManager : MonoBehaviour
 
     public List<string> curSettings()
     {
-        List<string> settings = new List<string>();
-        settings.Add(draftingOn.ToString());
-        settings.Add(numRounds.ToString());
+        List<string> settings = new List<string>
+        {
+            draftingOn.ToString(),
+            numRounds.ToString()
+        };
         if (draftingOn)
         {
             settings.Add("null");

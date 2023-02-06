@@ -954,6 +954,17 @@ MonoBehaviour:
   fileName: Presets
   presetButton: {fileID: 7727266669850506447, guid: 36e53319ee804d84f99a283a1cb0eda6, type: 3}
   nameEntryPanel: {fileID: 1749459560}
+--- !u!114 &316725965 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 752214088436285883, guid: 3ebfe3b11d0dbd5488dbf29587839430, type: 3}
+  m_PrefabInstance: {fileID: 1094330850}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2dea03198f418d44a871951ddbf8d2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &332852462
 GameObject:
   m_ObjectHideFlags: 0
@@ -5018,8 +5029,10 @@ MonoBehaviour:
   states:
   - NO
   - YES
-  scene: 
-  loadNewScene: 0
+  useFlipped: 0
+  flipped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1325058656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6151,8 +6164,10 @@ MonoBehaviour:
   states:
   - SCORE
   - EQUAL
-  scene: 
-  loadNewScene: 0
+  useFlipped: 0
+  flipped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1616680086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7188,8 +7203,22 @@ MonoBehaviour:
   states:
   - TITLE
   - 
-  scene: TitleScreen
-  loadNewScene: 1
+  useFlipped: 1
+  flipped:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 316725965}
+        m_TargetAssemblyTypeName: ButtonScript, Assembly-CSharp
+        m_MethodName: sceneLoad
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: TitleScreen
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1897713565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7491,8 +7520,10 @@ MonoBehaviour:
   states:
   - DRAFT
   - BUY
-  scene: 
-  loadNewScene: 0
+  useFlipped: 0
+  flipped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1934006687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7607,8 +7638,22 @@ MonoBehaviour:
   states:
   - START GAME
   - 
-  scene: Phase One
-  loadNewScene: 1
+  useFlipped: 1
+  flipped:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 316725965}
+        m_TargetAssemblyTypeName: ButtonScript, Assembly-CSharp
+        m_MethodName: sceneLoad
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Phase One
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2012974723
 MonoBehaviour:
   m_ObjectHideFlags: 0

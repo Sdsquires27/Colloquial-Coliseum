@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 
 public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
@@ -14,15 +16,18 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
     [SerializeField] private TextMeshProUGUI letterText;
     [SerializeField] private Animator letterAnim;
     [SerializeField] private string[] states = new string[2];
+    private bool active = true;
+
 
     [Header("Optional")]
-    [SerializeField] private string scene;
-    [SerializeField] private bool loadNewScene;
+    [SerializeField] private bool useFlipped;
+    [SerializeField] private UnityEvent flipped;
 
     public bool activated { get { return anim.GetBool("TileFlipped"); } }
     public void OnPointerClick(PointerEventData pointerEventData)
     {
- 
+
+        if (!active) return;
         if (!(anim.GetCurrentAnimatorStateInfo(0).IsName("TileAnimation")))
         {
             // activate the trigger
@@ -31,14 +36,22 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
             // change the value of tile flipped
             anim.SetBool("TileFlipped", !anim.GetBool("TileFlipped"));
             StartCoroutine(changeText(states[anim.GetBool("TileFlipped") ? 0 : 1], .2f));
-            if (loadNewScene) StartCoroutine(newSceneDelay(.6f));
+            if (useFlipped) StartCoroutine(functionDelay(.6f));
             letterAnim.SetBool("TileFlipped", !letterAnim.GetBool("TileFlipped"));
         }
     
     }
 
+    public void setActive(bool active)
+    {
+        this.active = active;
+        GetComponent<Image>().color = active ? Color.white : Color.gray;
+    }
+
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
+        if (!active) return;
+
         // set the tile touched variable in animators
         anim.SetBool("TileTouched", true);
         letterAnim.SetBool("TileTouched", true);
@@ -46,6 +59,8 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
 
     public void OnPointerExit(PointerEventData pointerEventData)
     {
+        if (!active) return;
+
         // set the tile touched variable in animator
         anim.SetBool("TileTouched", false);
         letterAnim.SetBool("TileTouched", false);
@@ -53,6 +68,8 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
 
     public void setReveal(bool revealed)
     {
+        if (!active) return;
+
         // reveal tile function
         anim.SetBool("TileFlipped", revealed);
         letterAnim.SetBool("TileFlipped", revealed);
@@ -60,18 +77,20 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
 
     private IEnumerator changeText(string text, float time)
     {
+
         yield return new WaitForSeconds(time);
         letterText.text = text;
     }
 
-    private IEnumerator newSceneDelay(float time)
+    private IEnumerator functionDelay(float time)
     {
         yield return new WaitForSeconds(time);
-        SceneManager.LoadScene(scene);
+        flipped.Invoke();
     }
 
     public void revealTile()
     {
+    
         // reveal tile function
         anim.SetBool("TileFlipped", false);
         letterAnim.SetBool("TileFlipped", false);

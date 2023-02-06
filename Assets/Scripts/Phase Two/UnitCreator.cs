@@ -10,6 +10,7 @@ public class UnitCreator : MonoBehaviour
     private int index = 0;
     [SerializeField] private TextMeshProUGUI text;
     private TileHolder tileHolder;
+    [SerializeField] private UIWorldTileScript endTurnTile;
 
     // Start is called before the first frame update
     void Start()
@@ -42,18 +43,23 @@ public class UnitCreator : MonoBehaviour
         unit = null;
     }
 
-    public bool canEndTurn(LetterHolder spellHolder)
+    public bool canEndTurn()
     {
+        if (units.Count == 0) return false;
         bool canEnd = true;
         foreach(Unit unit in units)
         {
             bool needSpells = unit.spellSlots != unit.spellTiles.Count;
-            if ((unit.worth != 0) || (needSpells && !spellHolder.hasNoTiles()))
+            if ((unit.worth != 0) || (needSpells && !GameManager.instance.spellHolder.hasNoTiles()))
             {
+                Debug.Log(unit.worth);
+                Debug.Log(needSpells && GameManager.instance.spellHolder.hasNoTiles());
                 canEnd = false;
             }
+        
         }
 
+        Debug.Log(canEnd);
         return canEnd;
     }
 
@@ -160,6 +166,14 @@ public class UnitCreator : MonoBehaviour
         else
         {
             text.text = "";
+        }
+        if (canEndTurn())
+        {
+            endTurnTile.setActive(true);
+        }
+        else
+        {
+            endTurnTile.setActive(false);
         }
     }
 }
