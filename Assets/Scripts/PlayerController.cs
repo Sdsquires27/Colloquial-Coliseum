@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int maxLetters;
     [SerializeField] public Color color;
 
+    [System.NonSerialized] public int score = 0;
+
 
     private List<LetterScript> heldTiles = new List<LetterScript>();
     [System.NonSerialized] public List<Unit> unitList = new List<Unit>();
@@ -32,6 +34,16 @@ public class PlayerController : MonoBehaviour
         }
 
         return letters;
+    }
+
+    public void subtractScore(int difference)
+    {
+        score -= difference;
+    }
+
+    public void addScore(int amount)
+    {
+        score += amount;
     }
 
     public List<string> getSpells()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UnitCreator : MonoBehaviour
 {
@@ -9,14 +10,35 @@ public class UnitCreator : MonoBehaviour
     public Unit unit; // current unit
     private int index = 0;
     [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private TextMeshProUGUI worthText;
     private TileHolder tileHolder;
     [SerializeField] private UIWorldTileScript endTurnTile;
+    [SerializeField] private GameObject statsBar;
+    [SerializeField] private GameObject indexBar;
+    [SerializeField] private GameObject spellHolderTile;
+    [SerializeField] private GameObject spellPlaceholder;
+    GameObject spellHolder;
 
     // Start is called before the first frame update
     void Start()
     {
-        tileHolder = GetComponentInChildren<TileHolder>();
+        tileHolder = GameObject.FindGameObjectWithTag("UnitSpells").GetComponent<TileHolder>();
+        spellHolder = GameObject.FindGameObjectWithTag("SpellHolders");
+        GameManager.onTurnSwitched += onTurnSwitched;
+        endTurnTile.setActive(false);
+        gameObject.SetActive(false);
+        statsBar.SetActive(false);
 
+    }
+
+
+
+    public void onTurnSwitched()
+    {
+        endTurnTile.setActive(false);
+        gameObject.SetActive(false);
+        statsBar.SetActive(false);
+        unit = null;
     }
 
     public void addSpell(SpellTile spell)
@@ -28,6 +50,20 @@ public class UnitCreator : MonoBehaviour
                 spell.spellHolder.removeTile(spell);
                 spell.transform.SetParent(tileHolder.transform);
                 unit.spellTiles.Add(spell);
+
+                bool foundHolder = false;
+                foreach (Transform x in tileHolder.transform)
+                {
+                    if (!foundHolder)
+                    {
+                        if (x.tag == "SpellPlaceholder")
+                        {
+                            Destroy(x.gameObject);
+                            foundHolder = true;
+                        }
+                    }
+
+                }
             }
         }
 
@@ -52,8 +88,7 @@ public class UnitCreator : MonoBehaviour
             bool needSpells = unit.spellSlots != unit.spellTiles.Count;
             if ((unit.worth != 0) || (needSpells && !GameManager.instance.spellHolder.hasNoTiles()))
             {
-                Debug.Log(unit.worth);
-                Debug.Log(needSpells && GameManager.instance.spellHolder.hasNoTiles());
+
                 canEnd = false;
             }
         
@@ -65,14 +100,56 @@ public class UnitCreator : MonoBehaviour
 
     public void removeSpell(SpellTile spell)
     {
+        Instantiate(spellPlaceholder, tileHolder.transform);
+
         unit.spellTiles.Remove(spell);
     }
 
     public void addUnit(Unit newUnit)
     {
+        gameObject.SetActive(true);
+        statsBar.SetActive(true);
         units.Add(newUnit);
+        Debug.Log(unit);
+        if(unit != null)
+        {
+            foreach (SpellTile spell in unit.spellTiles)
+            {
+                spell.gameObject.SetActive(false);
+            }
+        }
+
         index = units.Count - 1;
         unit = units[index];
+        showSpells();
+        foreach (SpellTile spell in unit.spellTiles)
+        {
+            spell.gameObject.SetActive(true);
+        }
+        indexBar.SetActive(units.Count > 1 ? true : false); // set the bar that allows you to select units to active if there are units to cycle through.
+    }
+
+    private void showSpells()
+    {
+        foreach(Transform t in spellHolder.transform)
+        {
+            Destroy(t.gameObject);
+        }
+        foreach (Transform t in tileHolder.transform)
+        {
+            if(t.tag == "SpellPlaceholder")
+            Destroy(t.gameObject);
+        }
+        for (int i = 0; i < unit.spellSlots; i++)
+        {
+            Instantiate(spellHolderTile, spellHolder.transform);
+
+        }
+        for (int i = 0; i < unit.spellSlots - unit.spellTiles.Count; i++)
+        {
+            Instantiate(spellPlaceholder, tileHolder.transform);
+        }
+
     }
 
     public void changeIndex(bool up)
@@ -91,7 +168,8 @@ public class UnitCreator : MonoBehaviour
             spell.gameObject.SetActive(false);
         }
         unit = units[index];
-        foreach(SpellTile spell in unit.spellTiles)
+        showSpells();
+        foreach (SpellTile spell in unit.spellTiles)
         {
             spell.gameObject.SetActive(true);
         }
@@ -162,6 +240,9 @@ public class UnitCreator : MonoBehaviour
         if (unit != null)
         {
             text.text = unit.word;
+            worthText.text = unit.worth.ToString();
+            GetComponent<Image>().sprite = unit.sprite;
+            GetComponent<Image>().color = GameManager.instance.curPlayer.color;
         }
         else
         {

@@ -32,6 +32,11 @@ TagManager:
   - NumRounds
   - NumBonus
   - FadeImage
+  - BuyTileHolder
+  - NumTiles
+  - SpellHolders
+  - UnitSpells
+  - SpellPlaceholder
   layers:
   - Default
   - TransparentFX

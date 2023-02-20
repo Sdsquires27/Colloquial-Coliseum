@@ -6,6 +6,7 @@ public class WordMaker : MonoBehaviour
 {
     LetterScript[] letters;
     WordGameDict dict = new WordGameDict();
+    [SerializeField] UnitCreator unitCreator;
     string currentWord()
     {
         // finds and returns the current word being spelled
@@ -29,7 +30,8 @@ public class WordMaker : MonoBehaviour
         {
             // do the thing
             Unit unit = new Unit(currentWord(), letters);
-            FindObjectOfType<UnitCreator>().addUnit(unit);
+
+            unitCreator.addUnit(unit);
             foreach (LetterScript letter in letters)
             {
                 Destroy(letter.gameObject);

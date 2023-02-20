@@ -10,12 +10,12 @@ using UnityEngine.UI;
 
 public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    
-
     private Animator anim;
     [SerializeField] private TextMeshProUGUI letterText;
     [SerializeField] private Animator letterAnim;
     [SerializeField] private string[] states = new string[2];
+    public string curState { get { return states[anim.GetBool("TileFlipped") ? 0 : 1]; } }
+    [SerializeField] private string infoText;
     private bool active = true;
 
 
@@ -52,6 +52,7 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
     {
         if (!active) return;
 
+        if(infoText != "") InformationPanel.callPanel(infoText, transform.position + new Vector3(0, 100));
         // set the tile touched variable in animators
         anim.SetBool("TileTouched", true);
         letterAnim.SetBool("TileTouched", true);
@@ -59,9 +60,8 @@ public class UIWorldTileScript : MonoBehaviour, IPointerClickHandler, IPointerEn
 
     public void OnPointerExit(PointerEventData pointerEventData)
     {
-        if (!active) return;
-
         // set the tile touched variable in animator
+        if(infoText != "") InformationPanel.dismissPanel();
         anim.SetBool("TileTouched", false);
         letterAnim.SetBool("TileTouched", false);
     }

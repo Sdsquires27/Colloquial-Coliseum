@@ -29,9 +29,7 @@ public class TileObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Units");
-        sprite = sprites[Random.Range(0, sprites.Length)];
-        GetComponent<SpriteRenderer>().sprite = sprite;
+        GetComponent<SpriteRenderer>().sprite = unit.sprite;
         Action attack = new Action.Attack(unit);
         actions = new Action[unit.spells.Count + 1];
         for(int i = 0; i < unit.spells.Count; i++) // starts at 1 because 0 is already taken by the attack action

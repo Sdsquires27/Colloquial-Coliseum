@@ -29,6 +29,16 @@ public class TileHolder : MonoBehaviour
         return letters;
     }
 
+    public List<string> getSpells()
+    {
+        List<string> spellNames = new List<string>();
+        foreach (SpellTile tile in spells)
+        {
+            spellNames.Add(tile.packName());
+        }
+        return spellNames;
+    }
+
     public void flipTiles()
     {
         foreach (LetterScript letterScript in letterScripts)

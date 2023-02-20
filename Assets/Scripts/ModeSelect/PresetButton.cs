@@ -36,13 +36,32 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
+        InformationPanel.callPanel(settingsToString(), transform.position + new Vector3(0, 100));
         // set the tile touched variable in animators
         anim.SetBool("TileTouched", true);
         letterAnim.SetBool("TileTouched", true);
     }
 
+    private string settingsToString()
+    {
+        string ret = text + "\n";
+
+        ret += "TYPE: " + (settings[0].Trim() == "true" ? "DRAFTING" : "BUY") + "\n";
+        ret += "ROUNDS: " +settings[1] + "\n";
+        ret += "TILE COUNT: " + settings[5] + "\n";
+        if (settings[0].Trim() != "true")
+        {
+            ret += "POINT GAIN: " + (settings[2].Trim() == "true" ? "SCORE" : "EQUAL") + "\n";
+            ret += "ROUND BONUS: " + settings[3] + "\n";
+            ret += "HANDICAP: " + (settings[4].Trim() == "true" ? "NO" : "YES") + "\n";
+        }
+
+        return ret;
+    }
+
     public void OnPointerExit(PointerEventData pointerEventData)
     {
+        InformationPanel.dismissPanel();
         // set the tile touched variable in animator
         anim.SetBool("TileTouched", false);
         letterAnim.SetBool("TileTouched", false);

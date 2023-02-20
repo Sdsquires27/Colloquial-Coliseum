@@ -28,14 +28,14 @@ public class GameModeManager : MonoBehaviour
             Debug.Log("No data in folder");
         }
 
-        for(int i = 0; i < loadedData.stringData.Count / 6; i++)
+        for(int i = 0; i < loadedData.stringData.Count / 7; i++)
         {
             GameObject x = Instantiate(presetButton, this.transform);
-            x.GetComponentInChildren<TextMeshProUGUI>().text = loadedData.stringData[i * 6];
-            string[] settings = new string[5];
-            for(int j = 1; j < 6; j++)
+            x.GetComponentInChildren<TextMeshProUGUI>().text = loadedData.stringData[i * 7];
+            string[] settings = new string[6];
+            for(int j = 1; j < 7; j++)
             {
-                settings[j - 1] = loadedData.stringData[j + (i * 6)];
+                settings[j - 1] = loadedData.stringData[j + (i * 7)];
             
             }
             x.GetComponent<PresetButton>().instantiate(settings);

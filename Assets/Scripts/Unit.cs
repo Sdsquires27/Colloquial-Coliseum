@@ -8,6 +8,7 @@ public class Unit
 {
     // holds unit data
     public string word;
+    public Sprite sprite;
     public LetterScript[] letterScripts;
     public List<Letter> letters = new List<Letter>();
     public int worth;
@@ -26,10 +27,27 @@ public class Unit
     public List<SpellTile> spellTiles = new List<SpellTile>();
     public List<Action> spells = new List<Action>();
 
+    public Unit(string setWord, LetterScript[] setLetters, Sprite sprite)
+    {
+        // create a standard unit
+        letterScripts = setLetters;
+        this.sprite = sprite;
+        word = setWord;
+        hp = 1;
+        armor = 0;
+        moveSpeed = 1;
+        range = 1;
+        dmg = 1;
+        piercing = 0;
+        getLetters();
+        getStats();
+    }
+
     public Unit(string setWord, LetterScript[] setLetters)
     {
         // create a standard unit
         letterScripts = setLetters;
+        sprite = GameManager.findSprite(setWord);
         word = setWord;
         hp = 1;
         armor = 0;

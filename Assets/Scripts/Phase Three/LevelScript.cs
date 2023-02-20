@@ -84,12 +84,12 @@ public class LevelScript : MonoBehaviour
 
     public void nextTurn()
     {
-        FindObjectOfType<GameManager>().phaseThreeTurn();
+        GameManager.instance.phaseThreeTurn();
     }
 
     public void endGame()
     {
-        FindObjectOfType<GameManager>().endGame();
+        GameManager.instance.endGame();
     }
 
     public void onHover(InputAction.CallbackContext context)
@@ -362,8 +362,19 @@ public class LevelScript : MonoBehaviour
 
             tilemap.RefreshAllTiles(); // reset all tiles
 
-            // if there is a list of tile objects and their positions, find where they are
-            if (tileObjects != null && objectPos != null)
+            if(placeables.Count != 0)
+            {
+
+
+                foreach (Vector3Int placeable in placeables)
+                {
+                    tilemap.SetColor(placeable, Color.blue); // set the color of the tile            }
+                }
+            }
+
+
+                // if there is a list of tile objects and their positions, find where they are
+                if (tileObjects != null && objectPos != null)
             {
                 for (int i = 0; i < tileObjects.Count; i++)
                 {

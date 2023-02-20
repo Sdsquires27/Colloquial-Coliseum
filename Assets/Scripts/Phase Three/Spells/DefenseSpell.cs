@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Spell", menuName = "New Spell/Defense Spell")]
-public class Defense : Action
+[CreateAssetMenu(fileName = "Spell", menuName = "New Spell/DefenseSpell")]
+public class DefenseSpell : Action
 {
     public int defense;
 
