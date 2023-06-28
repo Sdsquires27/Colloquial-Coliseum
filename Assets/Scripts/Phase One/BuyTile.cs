@@ -6,6 +6,9 @@ using TMPro;
 
 public class BuyTile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    // A tile that can be bought
+
+    // buy tile
     [SerializeField] private Animator letterAnim;
     private Animator anim;
     private TextMeshProUGUI text;

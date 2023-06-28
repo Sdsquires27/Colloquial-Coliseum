@@ -28,6 +28,7 @@ public class WordMaker : MonoBehaviour
     {
         if (dict.CheckWord(currentWord(), 2))
         {
+            GameManager.instance.giveWordPoints(currentWord());
             // do the thing
             Unit unit = new Unit(currentWord(), letters);
 

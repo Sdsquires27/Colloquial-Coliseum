@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public Color color;
 
     [System.NonSerialized] public int score = 0;
+    //[System.NonSerialized] 
+    public string playerName;
 
 
     private List<LetterScript> heldTiles = new List<LetterScript>();

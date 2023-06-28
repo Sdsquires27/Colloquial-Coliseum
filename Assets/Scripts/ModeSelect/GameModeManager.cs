@@ -98,3 +98,18 @@ public class BasicSaveData
     }
 
 }
+
+[System.Serializable]
+public class DoubleList
+{
+    public List<string> scores;
+    public List<string> names;
+
+    public DoubleList()
+    {
+        names = new List<string>();
+        scores = new List<string>();
+    }
+
+}
+

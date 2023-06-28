@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce625ec419316ee4e9576a719662d9a9, type: 3}
   m_Name: AoeHeal
   m_EditorClassIdentifier: 
-  rechargeTime: 3
+  rechargeTime: 4
   range: 3
   damage: 3
   spread: 4

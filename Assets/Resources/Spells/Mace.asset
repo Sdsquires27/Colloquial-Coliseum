@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 735f537761e376441914490564d76088, type: 3}
   m_Name: Mace
   m_EditorClassIdentifier: 
-  rechargeTime: 6
+  rechargeTime: 8
   range: 1
   damage: 10

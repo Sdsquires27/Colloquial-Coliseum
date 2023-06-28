@@ -31,7 +31,13 @@ public class HealingSpell : Action
         }
     }
 
-
+    public override string description
+    {
+        get
+        {
+            return string.Format("{3}\nAMOUNT: {0}\nRANGE: {1}\nSPREAD: {2}\nRECHARGE: {4}", damage, range, size, name.ToUpper(), rechargeTime);
+        }
+    }
 
     public override bool isAoe
     {
@@ -41,13 +47,29 @@ public class HealingSpell : Action
         }
     }
 
-    public override void use(TileObject tileToAffect)
+    public override int chanceToHit(Unit enemy)
     {
+        throw new System.NotImplementedException();
+    }
 
+    public override void use(TileObject tileToAffect, PlayerController playerController)
+    {
+        tileToAffect.heal(damage);
+        timeRecharging = rechargeTime;
     }
 
     public override void use(Vector3Int tileToAffect, PlayerController curPlayer)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Aoe spell used");
+        foreach (TileObject tileObject in LevelScript.objectsInTiles(LevelScript.tilesInRange(tileToAffect, range)))
+        {
+
+            // don't deal healing to own player
+            if (tileObject.playerController == curPlayer)
+            {
+                tileObject.heal(damage);
+            }
+
+        }
     }
 }

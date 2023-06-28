@@ -12,7 +12,7 @@ public class Unit
     public LetterScript[] letterScripts;
     public List<Letter> letters = new List<Letter>();
     public int worth;
-    public int hp;
+    public int hpMax;
     public int armor;
     public int piercing;
     public int pierceMin = 0;
@@ -23,7 +23,8 @@ public class Unit
     public int armorMin = 0;
     public int moveSpeedMin = 1;
     public int dmgMin = 1;
-    public int spellSlots = 1;
+    public int spellSlots = 0;
+    public bool moveAfterAttack = false;
     public List<SpellTile> spellTiles = new List<SpellTile>();
     public List<Action> spells = new List<Action>();
 
@@ -33,7 +34,7 @@ public class Unit
         letterScripts = setLetters;
         this.sprite = sprite;
         word = setWord;
-        hp = 1;
+        hpMax = 1;
         armor = 0;
         moveSpeed = 1;
         range = 1;
@@ -49,7 +50,7 @@ public class Unit
         letterScripts = setLetters;
         sprite = GameManager.findSprite(setWord);
         word = setWord;
-        hp = 1;
+        hpMax = 1;
         armor = 0;
         moveSpeed = 1;
         range = 1;
@@ -64,12 +65,11 @@ public class Unit
         foreach(SpellTile spellTile in spellTiles)
         {
             spells.Add(Resources.Load<Action>("Spells/"+spellTile.name));
-            Debug.Log("Spells/" + spellTile.name);
             
         }
         foreach(Action spell in spells)
         {
-            Debug.Log(spell.name);
+
         }
     }
 
@@ -77,17 +77,16 @@ public class Unit
     {
         string toPrint = "UNIT " + word + "\n";
 
-        toPrint += "Hp: " + hp + "\n" +
+        toPrint += "Hp: " + hpMax + "\n" +
             "Dmg: " + dmg + "\n" +
-            "Armor: " + hp + "\n" +
-            "MoveSpeed: " + hp + "\n" +
-            "Piercing: " + hp + "\nSpells:";
+            "Armor: " + hpMax + "\n" +
+            "MoveSpeed: " + hpMax + "\n" +
+            "Piercing: " + hpMax + "\nSpells:";
         foreach (Action spell in spells)
         {
             toPrint += "\n" + spell;
         }
 
-        Debug.Log(toPrint);
         
 
     }
@@ -119,9 +118,50 @@ public class Unit
             }
             else if (letter.worth == 4)
             {
+                worth += 1;
                 spellSlots += 1 ;
             }
+            else if(letter.worth == 5)
+            {
+                worth += 2;
+                range += 1;
+            }
+            else if(letter.worth == 6)
+            {
+                worth += 3;
+                moveAfterAttack = true;
+            }
+            else if (letter.worth == 7)
+            {
+                worth += 2;
+                spellSlots += 2;
+            }
+            else if(letter.worth == 8)
+            {
+                worth += 4;
+            }
+
         }
+        if(letters.Count >= 4)
+        {
+            worth += 1;
+
+            if (letters.Count >= 5)
+            {
+                spellSlots += 1;
+
+                if (letters.Count >= 6)
+                {
+                    worth += 2;
+
+                    if (letters.Count >= 7)
+                    {
+                        worth += 1 * (letters.Count - 6);
+                    }
+                }
+            }
+        }
+
         if(word == "SETH")
         {
             worth += 10; // hehe
@@ -134,8 +174,8 @@ public class Unit
 
         if (rand == 0)
         {
-            hp += 1;
-            hpMin += 1;
+            hpMax += 2;
+            hpMin += 2;
         }
         else if(rand == 1)
         {

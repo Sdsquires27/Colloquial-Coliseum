@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 735f537761e376441914490564d76088, type: 3}
   m_Name: Bow
   m_EditorClassIdentifier: 
-  rechargeTime: 3
-  range: 5
-  damage: 4
+  rechargeTime: 2
+  range: 3
+  damage: 2

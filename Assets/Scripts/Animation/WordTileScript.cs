@@ -13,6 +13,7 @@ public class WordTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public Letter letter;
     private LetterScript letterScript;
     private GameManager gameManager;
+    public AudioClip sound;
 
     public void OnPointerClick(PointerEventData pointerEventData)
     {
@@ -32,6 +33,11 @@ public class WordTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             letterScript.handleTileClick();
         }
+    }
+
+    public void playSound()
+    {
+        SoundManager.instance.PlaySound(sound);
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)
@@ -75,6 +81,7 @@ public class WordTileScript : MonoBehaviour, IPointerClickHandler, IPointerEnter
         // get the current animation
         anim = GetComponent<Animator>();
         gameManager = FindObjectOfType<GameManager>();
+        sound = Resources.Load<AudioClip>("Sounds/Hit3");
     }
 
     public void initialize(Letter newLetter)

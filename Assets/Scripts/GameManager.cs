@@ -1,12 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-using System.Text;
-using UnityEngine.Events;
 
 /// <summary>
 /// Controls movement during and between scenes. Controls basic game functions and handles turns in each phase.
@@ -22,6 +19,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SpellTile spellTilePrefab;
     [SerializeField] private GameObject personalMatPrefab;
     [SerializeField] private GameObject informationPanel;
+    [SerializeField] private GameObject messageObject;
+    [SerializeField] private GameObject leaderboardPanel;
+    [SerializeField] private GameObject[] playerTexts;
+    [SerializeField] private GameObject[] playerInputField;
 
     [Header("Settings")]
     [SerializeField] private int lettersPerPlayer;
@@ -29,6 +30,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int spellNum; // number of spells generated to choose from in phase one
     [SerializeField] private int spellsPerPack; // number of spells generated per pack
     [SerializeField] private Color backgroundColor;
+    [SerializeField] private string fileName;
+    [SerializeField] private string folderName;
 
     // accessed by other clases
     [System.NonSerialized] public List<string> wordList = new List<string>(); // list of letters created during phase one
@@ -42,8 +45,8 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     public static GameManager instance { get { return _instance; } }
     private int numPlayers; // number of players
-    private int playerNum = 0; // current player ID
-    private int score;
+    [System.NonSerialized] public int playerNum = 0; // current player ID
+    private int curRound = 1;
     private int numRounds;
     private int bonusPerRound;
     private bool draftingOn;
@@ -61,6 +64,7 @@ public class GameManager : MonoBehaviour
     private List<char> chars = new List<char>(); // list of all the characters that can be drawn from (multiple per letter). Used in phase one generation
     private int curTileGroup = 0; // current tile group that has been revealed, phase one
     int numPicks = 0; // number of picks that have been grabbed this reveal, phase one
+    private TextMeshProUGUI[] playerScoreTexts;
 
     //PHASE TWO VARIABLES
     private LetterHolder letterHolder; // phase two holder of letters not used
@@ -120,13 +124,13 @@ public class GameManager : MonoBehaviour
         {
             if (wordTileScripts[0].activated)
             {
-                for(int i = 1; i < wordTileScripts.Length; i++)
+                for (int i = 1; i < wordTileScripts.Length; i++)
                 {
                     wordTileScripts[i].enabled = false;
                     wordTileScripts[i].GetComponent<Image>().color = Color.gray;
                 }
                 slideSettingManagers[2].enabled = false;
-                foreach(Image image in slideSettingManagers[2].transform.GetComponentsInChildren<Image>())
+                foreach (Image image in slideSettingManagers[2].transform.GetComponentsInChildren<Image>())
                 {
                     image.color = Color.gray;
                 }
@@ -152,7 +156,41 @@ public class GameManager : MonoBehaviour
             handicapOff = wordTileScripts[2].activated;
             lettersPerPlayer = slideSettingManagers[3].curNum;
 
+            for(int i = 0; i < numPlayers; i++)
+            {
+                playerTexts[i].SetActive(true);
+                playerInputField[i].SetActive(true);
+                playerList[i].playerName = playerInputField[i].GetComponent<TMP_InputField>().text;
+                if (playerList[i].playerName == "") playerList[i].playerName = "PLAY" + (i + 1);
+            }
+            for(int i = numPlayers; i < playerTexts.Length; i++)
+            {
+                playerTexts[i].SetActive(false);
+                playerInputField[i].SetActive(false); 
+            }
 
+
+
+        }
+        else if (SceneManager.GetActiveScene().name == "Phase One")
+        {
+            if (!draftingOn)
+            {
+                int j = 0;
+                foreach (TextMeshProUGUI text in playerScoreTexts)
+                {
+                    if (playerList[j].enabled)
+                    {
+                        text.text = playerList[j].score.ToString();
+
+                    }
+                    else
+                    {
+                        text.text = "";
+                    }
+                    j++;
+                }
+            }
 
         }
         else if (SceneManager.GetActiveScene().name == "Phase Two")
@@ -177,7 +215,7 @@ public class GameManager : MonoBehaviour
             else
             {
 
-                hpText.text = curCreator.unit.hp.ToString();
+                hpText.text = curCreator.unit.hpMax.ToString();
                 armorText.text = curCreator.unit.armor.ToString();
                 spdText.text = curCreator.unit.moveSpeed.ToString();
                 dmgText.text = curCreator.unit.dmg.ToString();
@@ -198,7 +236,6 @@ public class GameManager : MonoBehaviour
         // when a new scene starts, initialize the scene
         canvas = GameObject.FindGameObjectWithTag("canvas");
 
-        Debug.Log(canvas);
         if(scene.name == "Phase One")
         {
             startPhaseOne();
@@ -254,10 +291,12 @@ public class GameManager : MonoBehaviour
 
     private void phaseOneBuyStart()
     {
+        playerScoreTexts = new TextMeshProUGUI[4];
         int j = 0;
         foreach (PlayerController player in playerList)
         {
             Image tempSr = GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Image>();
+            playerScoreTexts[j] = tempSr.gameObject.GetComponentInChildren<TextMeshProUGUI>();
             tempSr.color = playerList[j].color;
             player.gameObject.SetActive(true);
             GameObject y = Instantiate(personalMatPrefab, GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Transform>());
@@ -270,7 +309,7 @@ public class GameManager : MonoBehaviour
             playerList[i].enabled = false;
             GameObject y = GameObject.FindGameObjectWithTag("Mat" + (i + 1));
             y.GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            y.transform.GetChild(0).GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            y.transform.GetChild(1).GetComponent<Image>().color = new Color(0, 0, 0, 0);
 
 
         }
@@ -355,7 +394,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < numPlayers; i++)
         {
             GameObject y = GameObject.FindGameObjectWithTag("Mat" + (i + 1));
-            Transform tileHolder = y.transform.GetChild(0).GetChild(0);
+            Transform tileHolder = y.transform.GetChild(1).GetChild(0);
             List<char> list = levelOneChars[i];
 
             for (int l = 0; l < 3; l++)
@@ -374,11 +413,14 @@ public class GameManager : MonoBehaviour
     }
     private void phaseOneDraftStart()
     {
+        
+
         GameObject.FindGameObjectWithTag("BuyTileHolder").SetActive(false);
         int j = 0;
         foreach (PlayerController player in playerList)
         {
             Image tempSr = GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Image>();
+            tempSr.transform.GetComponentInChildren<TextMeshProUGUI>().gameObject.gameObject.SetActive(false);
             tempSr.color = playerList[j].color;
             player.gameObject.SetActive(true);
             GameObject y = Instantiate(personalMatPrefab, GameObject.FindGameObjectWithTag("Mat" + (j + 1)).GetComponent<Transform>());
@@ -393,7 +435,7 @@ public class GameManager : MonoBehaviour
             playerList[i].enabled = false;
             GameObject y = GameObject.FindGameObjectWithTag("Mat" + (i + 1));
             y.GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            y.transform.GetChild(0).GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            y.transform.GetChild(1).GetComponent<Image>().color = new Color(0, 0, 0, 0);
 
 
         }
@@ -442,7 +484,6 @@ public class GameManager : MonoBehaviour
         }
         int layoutChildren = 0;
         int curLayout = 0;
-        Debug.Log(numLetters);
 
         for (int i = 0; i < numLetters; i++)
         {
@@ -468,18 +509,17 @@ public class GameManager : MonoBehaviour
 
         // generate spells
         Sprite[] spellIcons = Resources.LoadAll<Sprite>("Sprites/Spells/Packs");
-        List<Sprite> chosenSpells = new List<Sprite>();
         GameObject x = Instantiate(layoutPrefab, verticalLayout.transform);
         for (int i = 0; i < spellNum; i++)
         {
-            generateSpell(x, spellIcons[Random.Range(0, spellIcons.Length - 1)]);
+            generateSpell(x, spellIcons[Random.Range(0, spellIcons.Length)]);
 
         }
 
         for (int i = 0; i < numPlayers; i++)
         {
             GameObject y = GameObject.FindGameObjectWithTag("Mat" + (i + 1));
-            Transform tileHolder = y.transform.GetChild(0).GetChild(0);
+            Transform tileHolder = y.transform.GetChild(1).GetChild(0);
             List<char> list = levelOneChars[i];
 
             for (int l = 0; l < 3; l++)
@@ -488,7 +528,7 @@ public class GameManager : MonoBehaviour
                 generateLetter(list[rand], tileHolder);
                 list.RemoveAt(rand);
             }
-            generateSpell(tileHolder.gameObject, spellIcons[Random.Range(0, spellIcons.Length - 1)]);
+            generateSpell(tileHolder.gameObject, spellIcons[Random.Range(0, spellIcons.Length)]);
 
 
 
@@ -501,7 +541,7 @@ public class GameManager : MonoBehaviour
     public void endPhaseThree(TileObject[] winningTiles)
     {
         panel.SetActive(true);
-
+        panel.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "CONGRATULATIONS " + winningTiles[0].playerController.name.ToUpper();
         TextMeshProUGUI unitText = GameObject.FindGameObjectWithTag("Unit Text").GetComponent<TextMeshProUGUI>();
 
         unitText.text = "UNITS:";
@@ -518,7 +558,87 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void endGame()
     {
-        Debug.Log("Game Over");
+        TextAsset scoreFile;
+        TextAsset nameFile;
+
+        string newFileName = draftingOn ? fileName : fileName + "Buy";
+
+        DoubleList data = SaveLoad<DoubleList>.Load(folderName, newFileName) ?? new DoubleList();
+        if (data.scores.Count == 0)
+        {
+            if (draftingOn)
+            {
+                scoreFile = Resources.Load<TextAsset>("GameMode/HighScores");
+                nameFile = Resources.Load<TextAsset>("GameMode/HighScoreNames");
+            }
+            else
+            {
+                scoreFile = Resources.Load<TextAsset>("GameMode/HighScoresBuy");
+                nameFile = Resources.Load<TextAsset>("GameMode/HighScoreNamesBuy");
+            }
+            data.scores = new List<string>(scoreFile.text.Split('\n'));
+            data.names = new List<string>(nameFile.text.Split('\n'));
+
+
+        }
+
+        List<string> savedHighscores = data.scores;
+        List<string> savedNames = data.names;
+
+        foreach (PlayerController player in playerList)
+        {
+
+            for (int i = 0; i < savedHighscores.Count; i++)
+            {
+                if (int.Parse(savedHighscores[i]) < player.score)
+                {
+                    savedHighscores.Insert(i, player.score.ToString());
+                    savedNames.Insert(i, player.playerName);
+                    break;
+                }
+            }
+
+        }
+
+        if (savedHighscores.Count > 10)
+        {
+            savedHighscores.RemoveRange(10, savedHighscores.Count - 10);
+            savedNames.RemoveRange(10, savedNames.Count - 10);
+        }
+
+        SaveLoad<DoubleList>.Save(data, folderName, newFileName);
+
+        var panel = Instantiate(leaderboardPanel, canvas.transform);
+        TextMeshProUGUI[] texts = panel.transform.GetChild(0).GetComponentsInChildren<TextMeshProUGUI>();
+
+        string info = "";
+        for(int i = 0; i < 5; i++)
+        {
+            info += string.Format("{0}. {1:000000} - {2}\n", i + 1, int.Parse(savedHighscores[i]), savedNames[i]);
+
+        }
+        texts[0].text = info;
+
+        info = "";
+        for (int i = 5; i < 10; i++)
+        {
+            info += string.Format("{0}. {1:000000} - {2}\n", i + 1, int.Parse(savedHighscores[i]), savedNames[i]);
+
+        }
+        texts[1].text = info;
+    }
+
+    public void loadEndGame()
+    {
+        curRound++;
+        if (curRound > numRounds)
+        {
+            SceneManager.LoadScene("ModeSelect");
+        }
+        else
+        {
+            SceneManager.LoadScene("Phase One");
+        }
     }
 
     /// <summary>
@@ -573,7 +693,7 @@ public class GameManager : MonoBehaviour
     public void phaseThreeTurn()
     {
         playerNum++;
-        if (playerNum == playerList.Length || !playerList[playerNum].enabled)
+        if (playerNum >= playerList.Length || !playerList[playerNum].enabled)
         {
             playerNum = 0;
         }
@@ -651,19 +771,24 @@ public class GameManager : MonoBehaviour
                             {
                                 spellList[i].Add(spell);
                             }
-
+                            if (GameObject.FindGameObjectWithTag("Mat" + (i + 1)).transform.GetChild(1).GetChild(0).GetComponent<TileHolder>().getLetters().Length == 0 &&
+                                GameObject.FindGameObjectWithTag("Mat" + (i + 1)).transform.GetChild(1).GetChild(0).GetComponent<TileHolder>().getSpells().Count == 0)
+                            {
+                                giveScore(player, 200);
+                            }
                             strings[i] += player.getLetters();
 
                             for (int j = 0; j < strings.Length; j++)
                             {
                                 if (j != i)
                                 {
-                                    strings[i] += GameObject.FindGameObjectWithTag("Mat" + (j + 1)).transform.GetChild(0).GetChild(0).GetComponent<TileHolder>().getLetters();
-
-                                    foreach (string spell in GameObject.FindGameObjectWithTag("Mat" + (j + 1)).transform.GetChild(0).GetChild(0).GetComponent<TileHolder>().getSpells())
+                                    strings[i] += GameObject.FindGameObjectWithTag("Mat" + (j + 1)).transform.GetChild(1).GetChild(0).GetComponent<TileHolder>().getLetters();
+                                    
+                                    foreach (string spell in GameObject.FindGameObjectWithTag("Mat" + (j + 1)).transform.GetChild(1).GetChild(0).GetComponent<TileHolder>().getSpells())
                                     {
                                         spellList[i].Add(spell);
                                     }
+
                                 }
                             }
                             wordList.Add(strings[i]);
@@ -759,7 +884,7 @@ public class GameManager : MonoBehaviour
                 playerNum++;
 
                 // if the player is not the last player
-                if (playerList[playerNum].enabled)
+                if (playerList.Length > playerNum && playerList[playerNum].enabled)
                 {
                     // next turn
                     phaseTwoTurn(playerNum);
@@ -786,6 +911,16 @@ public class GameManager : MonoBehaviour
         SpellTile tempSpell = Instantiate(spellTilePrefab, layoutHolder.transform);
         tempSpell.initialize(this, layoutHolder.GetComponent<TileHolder>(), icon);
         tempSpell.name = icon.name;
+    }
+
+    SpellTile generateSpell(GameObject layoutHolder, Sprite icon, Vector3 pos)
+    {
+        // create a spell tile
+        SpellTile tempSpell = Instantiate(spellTilePrefab, layoutHolder?.transform);
+        tempSpell.initialize(this, layoutHolder.GetComponent<TileHolder>(), icon);
+        tempSpell.name = icon.name;
+        tempSpell.transform.position = pos;
+        return tempSpell;
     }
 
     /// <summary>
@@ -930,9 +1065,7 @@ public class GameManager : MonoBehaviour
 
         if(sprite == null)
         {
-            Debug.Log("Sprite not loaded");
             Sprite[] sprites = Resources.LoadAll<Sprite>("Sprites/Units/Generic");
-            Debug.Log(sprites.Length);
             sprite = sprites[Random.Range(0, sprites.Length - 1)];
         }
 
@@ -940,9 +1073,32 @@ public class GameManager : MonoBehaviour
         return sprite;
     }
 
+    /// <summary>
+    /// Generates a message on the screen
+    /// </summary>
+    public static void displayMessage(string word, Color color)
+    {
+        // create the object
+        var x = Instantiate(_instance.messageObject, _instance.canvas.transform);
+        // put the object in a random place on the screen
+        x.transform.position = new Vector3(Random.Range(0, Screen.width - x.GetComponent<RectTransform>().rect.width), Random.Range(0, Screen.height - x.GetComponent<RectTransform>().rect.height));
+        // assign the object's color and word.
+        x.GetComponentInChildren<TextMeshProUGUI>().color = color;
+        x.GetComponentInChildren<TextMeshProUGUI>().text = word;
+
+    }
+
     public static LetterScript createLetter(char letter, Vector3 pos)
     {
         LetterScript x = _instance.generateLetter(letter, _instance.curPlayer, pos, true);
+
+        return x;
+    }
+
+
+    public static SpellTile createSpell(Image image, Vector3 pos)
+    {
+        SpellTile x = _instance.generateSpell(null, image.sprite, pos);
 
         return x;
     }
@@ -1006,7 +1162,7 @@ public class GameManager : MonoBehaviour
             if (tempSr.color.a != 0f)
             {
                 tempSr.color = new Color(tempSr.color.r, tempSr.color.g, tempSr.color.b, .5f);
-                Image tempChildSr = tempSr.transform.GetChild(0).GetComponent<Image>();
+                Image tempChildSr = tempSr.transform.GetChild(1).GetComponent<Image>();
                 tempChildSr.color = new Color(tempChildSr.color.r, tempChildSr.color.g, tempChildSr.color.b, .5f);
                 TileHolder tempTileHolder = tempChildSr.transform.GetChild(0).GetComponent<TileHolder>();
                 tempTileHolder.hideTiles();
@@ -1014,11 +1170,45 @@ public class GameManager : MonoBehaviour
             }
         }
         Image sr = GameObject.FindGameObjectWithTag("Mat" + (playerNum + 1)).GetComponent<Image>();
-        Image childSr = sr.transform.GetChild(0).GetComponent<Image>();
+        Image childSr = sr.transform.GetChild(1).GetComponent<Image>();
         childSr.color = new Color(childSr.color.r, childSr.color.g, childSr.color.b, 1);
         TileHolder tileHolder = childSr.transform.GetChild(0).GetComponent<TileHolder>();
         tileHolder.revealTiles();
         sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 1);
+    }
+
+    public static void giveScore(PlayerController player, int amount)
+    {
+        player.addScore(amount);
+    }
+
+    public static string spellDescription(string spellName)
+    {
+        string ret;
+        try
+        {
+            Action action = Resources.Load<Action>("Spells/"+spellName);
+            ret = action.description;
+        }
+        catch
+        {
+            ret = spellName.Remove(spellName.Length - 5).ToUpper();
+            ret = ret + " SPELL PACK";
+
+        }
+        return ret;
+    }
+
+    public void giveWordPoints(string word) 
+    {
+        int points = 100;
+
+        for(int i = 0; i < word.Length; i++)
+        {
+            points += i * 50;
+        }
+
+        giveScore(curPlayer, points);
     }
 
     /// <summary>

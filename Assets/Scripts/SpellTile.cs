@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
-public class SpellTile : MonoBehaviour, IPointerClickHandler
+public class SpellTile : MonoBehaviour, IPointerClickHandler, IInfoPanel
 {
     private Image image;
     private Sprite sprite;
@@ -13,6 +14,22 @@ public class SpellTile : MonoBehaviour, IPointerClickHandler
     private GameManager gameManager;
     public LetterFollow letterFollowPrefab;
     
+    public string description
+    {
+        get
+        {
+            if(SceneManager.GetActiveScene().name == "Phase One")
+            {
+
+            }
+            if (SceneManager.GetActiveScene().name == "Phase Two")
+            {
+
+            }
+            return GameManager.spellDescription(sprite.name);
+        }
+    }
+
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         gameManager.handleTileClick(this);
@@ -28,7 +45,7 @@ public class SpellTile : MonoBehaviour, IPointerClickHandler
 
     public void initialize(GameManager controller, TileHolder holder, Sprite newSprite)
     {
-        holder.addTile(this);
+        holder?.addTile(this);
         spellHolder = holder;
         sprite = newSprite;
         gameManager = controller;

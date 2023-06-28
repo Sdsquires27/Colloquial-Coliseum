@@ -18,4 +18,14 @@ public class ButtonScript : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void loadEndGame()
+    {
+        GameManager.instance.loadEndGame();
+    }
+
+    public void startLoadNewScene()
+    {
+        SoundManager.instance.fadeSound();
+    }
 }

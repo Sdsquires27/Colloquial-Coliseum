@@ -11,6 +11,8 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public Animator anim;
     private string text;
     public Animator letterAnim;
+    public AudioClip sound;
+
 
     public void instantiate(string[] settings)
     {
@@ -26,6 +28,11 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
             GameManager.instance.newSettings(settings);
         }
 
+    }
+
+    public void playSound()
+    {
+        SoundManager.instance.PlaySound(sound);
     }
 
     private IEnumerator changeText(string text, float time)
@@ -67,6 +74,8 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         letterAnim.SetBool("TileTouched", false);
     }
 
+
+
     public void Update()
     {
         if (checkSettings())
@@ -96,6 +105,8 @@ public class PresetButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public void Start()
     {
         text = letterText.text;
+        sound = Resources.Load<AudioClip>("Sounds/Hit3");
+
     }
 
     public bool checkSettings()

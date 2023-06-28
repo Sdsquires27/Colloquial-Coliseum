@@ -36,9 +36,34 @@ public class AttackSpell : Action
         }
     }
 
-    public override void use(TileObject tileToAffect)
+    public override string description
     {
+        get
+        {
+            return string.Format("{2}\nDAMAGE: {0}\nRANGE: {1}\nRECHARGE: {3}", damage, range, name.ToUpper(), rechargeTime);
+        }
+    }
 
+    public override int chanceToHit(Unit enemy)
+    {
+        return 100 - enemy.armor * 7;
+    }
+
+    public override void use(TileObject tileToAffect, PlayerController playerController)
+    {
+        int rand = Random.Range(0, 100);
+
+        if (tileToAffect.unit.armor * 7 <= rand)
+        {
+            tileToAffect.takeDamage(damage, playerController);
+            hitMessage(new Unit[] { tileToAffect.unit }, damage, Color.green);
+        }
+        else
+        {
+            hitMessage(new Unit[] { tileToAffect.unit }, 0, Color.red);
+
+        }
+        timeRecharging = rechargeTime;
     }
 
     public override void use(Vector3Int tileToAffect, PlayerController playerController)

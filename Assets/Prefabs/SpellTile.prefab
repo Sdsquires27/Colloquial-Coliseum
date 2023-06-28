@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 376592608127546282}
   - component: {fileID: 2321261951386588099}
   - component: {fileID: 8147995157434414151}
+  - component: {fileID: -2604787005985558672}
   m_Layer: 5
   m_Name: SpellTile
   m_TagString: Untagged
@@ -89,3 +90,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterFollowPrefab: {fileID: 8105999992868713827, guid: 932001f0a59f97f46b4e9ae19c7345ba, type: 3}
+--- !u!114 &-2604787005985558672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4101731423551334759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec7a3b86466b2840b0fb63ebfde0dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: 
+  yOffset: 50
+  xOffset: 0

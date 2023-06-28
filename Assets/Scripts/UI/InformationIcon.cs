@@ -9,6 +9,14 @@ public class InformationIcon : MonoBehaviour, IPointerEnterHandler, IPointerExit
     [SerializeField] private int yOffset;
     [SerializeField] private int xOffset;
 
+    public void Start()
+    {
+        if(description == "")
+        {
+            description = GetComponent<IInfoPanel>().description;
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
             InformationPanel.callPanel(description, new Vector2(transform.position.x + xOffset, transform.position.y + yOffset));
@@ -19,4 +27,9 @@ public class InformationIcon : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
             InformationPanel.dismissPanel();
     }
+}
+
+public interface IInfoPanel
+{
+    public string description { get; }
 }

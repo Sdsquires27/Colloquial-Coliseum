@@ -31,7 +31,10 @@ public class UnitCreator : MonoBehaviour
 
     }
 
-
+    private void OnDisable()
+    {
+        GameManager.onTurnSwitched -= onTurnSwitched;
+    }
 
     public void onTurnSwitched()
     {
@@ -94,7 +97,6 @@ public class UnitCreator : MonoBehaviour
         
         }
 
-        Debug.Log(canEnd);
         return canEnd;
     }
 
@@ -110,7 +112,6 @@ public class UnitCreator : MonoBehaviour
         gameObject.SetActive(true);
         statsBar.SetActive(true);
         units.Add(newUnit);
-        Debug.Log(unit);
         if(unit != null)
         {
             foreach (SpellTile spell in unit.spellTiles)
@@ -182,7 +183,7 @@ public class UnitCreator : MonoBehaviour
             unit.worth--;
             if (stat == "HP")
             {
-                unit.hp++;
+                unit.hpMax+=2;
             }
             else if (stat == "DMG")
             {
@@ -206,9 +207,9 @@ public class UnitCreator : MonoBehaviour
 
     public void downStat(string stat)
     {
-        if (stat == "HP" && unit.hp > unit.hpMin)
+        if (stat == "HP" && unit.hpMax > unit.hpMin)
         {
-            unit.hp--;
+            unit.hpMax-= 2;
             unit.worth++;
         }
         else if (stat == "DMG" && unit.dmg > unit.dmgMin)
@@ -242,7 +243,6 @@ public class UnitCreator : MonoBehaviour
             text.text = unit.word;
             worthText.text = unit.worth.ToString();
             GetComponent<Image>().sprite = unit.sprite;
-            GetComponent<Image>().color = GameManager.instance.curPlayer.color;
         }
         else
         {

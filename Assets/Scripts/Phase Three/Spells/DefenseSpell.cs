@@ -22,11 +22,19 @@ public class DefenseSpell : Action
         }
     }
 
+    public override string description
+    {
+        get
+        {
+            return string.Format("{3}\nSHIELD: {0}\nRANGE: {1}\nSPREAD: {2}\nTHORNS: {4}\nRECHARGE: {5}", defense, range, size, name.ToUpper(), damage, rechargeTime);
+        }
+    }
+
     public override bool targetsEnemy
     {
         get
         {
-            return true;
+            return false;
         }
     }
 
@@ -38,10 +46,15 @@ public class DefenseSpell : Action
         }
     }
 
-
-    public override void use(TileObject tileToAffect)
+    public override int chanceToHit(Unit enemy)
     {
+        throw new System.NotImplementedException();
+    }
 
+    public override void use(TileObject tileToAffect, PlayerController curPlayer)
+    {
+        tileToAffect.giveDefense(defense, damage);
+        timeRecharging = rechargeTime;
     }
     public override void use(Vector3Int tileToAffect, PlayerController playerController)
     {
